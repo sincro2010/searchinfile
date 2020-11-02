@@ -31,7 +31,7 @@
 function binarySearchByKey($file, $search){
 	$handle = fopen($file, "r"); //открываем файл для чтения
 	while (!feof($handle)){//выполнение до конца файла
-		$string = fgets($handle,4000); //читаем данные по 4000 байт
+		$string = fgets($handle); //читаем данные из файла
 		mb_convert_encoding($string, 'cp1251'); //применяем русский язык
 		$explodedstring = explode('\x0A', $string); //получается масив ключ\tзначение
 		//echo "<pre>";
