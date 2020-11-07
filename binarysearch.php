@@ -29,7 +29,8 @@
 
 
 function binarySearchByKey($file, $search){
-		$string = file_get_contents($file); //читаем данные из файла
+	$handle = @fopen($file, "r"); //открываем файл для чтения
+	while (($string = fgets($handle)) !== false) { //выполнение программы пока в тексте есть строки
 		mb_convert_encoding($string, 'cp1251'); //применяем русский язык
 		$explodedstring = explode('\x0A', $string); //получается масив ключ\tзначение
 		//echo "<pre>";
@@ -57,10 +58,10 @@ function binarySearchByKey($file, $search){
 			return $arr[$middle][1]; //возращаем значение ключу
 		}
 	}
-			return $arr[$middle][1]; //возращаем значение ключу
-		
-	return 'undef'; //в случае если в файле нет искомого значения
+	}
+		return 'undef'; //в случае если в файле нет искомого значения	
 }
+
 
  if (!empty($_POST['search']))
  {
