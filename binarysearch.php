@@ -26,7 +26,7 @@
    </form>
    <br><br><br><br>
 <?php
-
+ini_set( 'memory_limit', -1);
 
 function binarySearchByKey($file, $search){
 		$string = file_get_contents($file); //читаем данные из файла
@@ -68,7 +68,7 @@ function binarySearchByKey($file, $search){
 define($PATH_INFO, dirname('_FILE_')); //определяет константу для корневой дирректории
 $iskomoye = $_POST['search']; //переменная, которая вводится в поле поиска
 $search = 'ключ'.$iskomoye;  //изменить текстовую часть ключа можно тут
-$file = $PATH_INFO.'key.txt'; //изменить имя файла можно тут
+$file = $PATH_INFO.'newkey.txt'; //изменить имя файла можно тут
 
 echo "Искомое значение в файле: ";
 echo binarySearchByKey($file, $search)."<br>";
