@@ -1,20 +1,15 @@
 <?php
 
 
-$fp = fopen('newkey.txt', 'w');
+$fp = fopen('newkey.txt', 'w'); // открываем файл в режиме записи
 
-for($i=1; $i <= 10000; $i++) {
-    $key = 'ключ';
-    $value = '\tзначение';
-    $prefix = '\x0A';
-    $content = $key.$i.$value.$i.$prefix;
-    $text = fwrite($fp, $content);
-
-    $newtext = wordwrap($text, 200, "\n", true);
+for($i=1; $i <= 30000; $i++) {    //cоздаём цикл на $i количество итераций
+    $content = "ключ$i\tзначение$i\x0A"; //создаём паттерн
+    $text = fwrite($fp, $content); // запись в файл
 
 }
 
 
-fclose($fp);
+fclose($fp); //закрытие файла
 
 ?>

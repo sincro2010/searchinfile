@@ -26,54 +26,46 @@
    </form>
    <br><br><br><br>
 <?php
-ini_set( 'memory_limit', -1);
 
-function binarySearchByKey($file, $search){
-		$string = file_get_contents($file); //читаем данные из файла
-		mb_convert_encoding($string, 'cp1251'); //применяем русский язык
-		$explodedstring = explode('\x0A', $string); //получается масив ключ\tзначение
-		//echo "<pre>";
-		//print_r($explodedstring);
-		array_pop($explodedstring); //удаление последнего элемента массива, т.к. он пустой
-		foreach ($explodedstring as $key => $value) {
-			   $arr[] = explode('\t', $value); //формируем массив в массиве с отбражением ключа
-		}
-		//echo "<pre>";
-		//print_r($arr);
+$startTime = microtime(true); //начало таймера
 
-	    $start = 0; //задаем начальное значение
-	    $end = count($arr)-1; // определяем конец, т.к. нулевой массив считается первым элементом вычитаем 1
- 
-	while ($start <= $end){//условие пока начальное значение не больше или равно конечному
-		$middle = floor(($start + $end)/2); //определяем середину и округляем
-		$strnatcmp = strnatcmp($arr[$middle][0],$search); //сравниваем полученное с искомым
-		if ($strnatcmp > 0){
-			$end = $middle - 1; //присваиваем к конечному значению
-		}
-		elseif ($strnatcmp < 0){
-		$start = $middle + 1; //присваиваем к начальному значению	
-		}
-		else {
-			return $arr[$middle][1]; //возращаем значение ключу
-		}
-	}
-			
-	
-			return 'undef'; //в случае если в файле нет искомого значения 
-		
-}
-
- if (!empty($_POST['search']))
- {
 define($PATH_INFO, dirname('_FILE_')); //определяет константу для корневой дирректории
 $iskomoye = $_POST['search']; //переменная, которая вводится в поле поиска
-$search = 'ключ'.$iskomoye;  //изменить текстовую часть ключа можно тут
-$file = $PATH_INFO.'newkey.txt'; //изменить имя файла можно тут
+$search = "ключ".$iskomoye;  //изменить текстовую часть ключа можно тут
+$filename = $PATH_INFO.'newkey.txt'; //изменить имя файла можно тут
 
-echo "Искомое значение в файле: ";
-echo binarySearchByKey($file, $search)."<br>";
- }
+$file = new SplFileObject($filename);//создаём объект файла
+	$start = 0; //задаем начало поиска
+	$file->seek($file->getSize());
+	$end = $file->key(); // определяем конец поиска
+	//echo $end . "строк"."<br>"; //проверка количества строк в файле
+	$file->seek(0);
+	$string=$file->current();
+	$key = stristr($string, "\t", true); //начальное значение переменной бинарного поиска присваиваем ключу первой строки файла
+	//echo $key.'<br>'; //проверка начального ключа
+	
+while (strnatcmp($search, $key) !==0&&($end>$start+1)) {  //цикл продолжается пока значение поиска не совпадёт с ключём, либо пока разница между верхней и нижней границей не станет равна 1 
+    $middle = round(($end+$start)/2); //определяем середину и округляем
+    $file->seek($middle);
+    $string = $file->current();  
+    $key = stristr($string, "\t", true); // возвращаем ключ из  текущей строки
+    (strnatcmp($search, $key) < 0)?$end = $middle:$start = $middle;//сравниваем переменную поиска с заданным ключом, и в зависимости от рез-та сравнения изменяем или нижнюю или верхнюю границу
+	//echo $key . "<br>";    //проверерка текцщего значения ключа
+}
+
+if (strnatcmp($search, $key)!==0||$iskomoye ==0) { //если ключ не совпал с переменной поиска, или переменная поиска равна нулю
+	$value = 'undef';	  // искомое значение равно undef
+} else {
+	$value = stristr($string, "\t"); 
+}
+
+echo "Вы ввели: ".$iskomoye.'<br>';	
+echo "Искомое значение в файле: ". $value.'<br>';
+
  
  echo "Памяти использовано: ";
  require('memory.php');
+ $time = microtime(true) - $startTime;
+ echo "Время выполнения: ".number_format($time, 4) . "сек";
+
 ?>
